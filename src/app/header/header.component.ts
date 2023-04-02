@@ -34,11 +34,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.dataStorageService.fetchRecipes().subscribe();
   }
 
-  onLogout(){
+  onLogout() {
     this.authService.logout();
   }
 
-  onAuthenticate(){
+  onAuthenticate() {
     this.router.navigate(['/auth']);
   }
 

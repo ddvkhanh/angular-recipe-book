@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs-compat';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
+import { DataStorageService } from '../shared/data-storage.service';
 
 @Component({
   selector: 'app-shopping-list',
@@ -13,12 +14,22 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
 
   private igChangeSub: Subscription;
 
-  constructor(private shoppingListService: ShoppingListService) {}
+  constructor(
+    private shoppingListService: ShoppingListService,
+    private dataService: DataStorageService
+  ) {}
 
   ngOnInit(): void {
-    this.ingredients = this.shoppingListService.getIngredients();
+    this.dataService.fetchShoppingList().subscribe((ingredients) => {
+      this.ingredients = ingredients;
+      this.shoppingListService.setShoppingList(ingredients);
+    });
+
     this.igChangeSub = this.shoppingListService.ingredientsChanged.subscribe(
-      (ingredients: Ingredient[]) => this.ingredients = ingredients
+      (ingredients: Ingredient[]) => {
+        debugger;
+        this.ingredients = ingredients;
+      }
     );
   }
 
@@ -26,7 +37,16 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
     this.igChangeSub.unsubscribe();
   }
 
-  onEditItem(index:number) {
-     this.shoppingListService.startedEditing.next(index);
+  onEditItem(index: number) {
+    this.shoppingListService.startedEditing.next(index);
+  }
+
+  onSave() {
+    this.shoppingListService.saveShoppingList();
+  }
+
+  onReset() {
+    this.shoppingListService.setShoppingList([]);
+    this.shoppingListService.resetShoppingList();
   }
 }

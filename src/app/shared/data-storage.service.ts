@@ -10,12 +10,24 @@ import { Ingredient } from './ingredient.model';
   providedIn: 'root',
 })
 export class DataStorageService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private shoppingService: ShoppingListService,
+    private recipeService: RecipeService
+  ) {}
 
   api: string = 'https://angular-recipe-31e2b-default-rtdb.firebaseio.com';
 
-  storeRecipe(recipes: Recipe[]) {
+  storeRecipes() {
+    const recipes = this.recipeService.getRecipes();
     this.http.put(this.api + '/recipes.json', recipes).subscribe((response) => {
+      console.log(response);
+    });
+  }
+
+  storeRecipe(recipe: Recipe) {
+    debugger;
+    this.http.post(this.api + '/recipes.json', recipe).subscribe((response) => {
       console.log(response);
     });
   }
@@ -29,6 +41,9 @@ export class DataStorageService {
             ingredient: recipe.ingredients ? recipe.ingredients : [],
           };
         });
+      }),
+      tap((recipes) => {
+        this.recipeService.setRecipes(recipes);
       })
     );
   }
@@ -50,8 +65,11 @@ export class DataStorageService {
   }
 
   fetchShoppingList() {
-    return this.http
-      .get<Ingredient[]>(this.api + '/shopping-list.json')
-      .pipe(map((shoppingList) => (shoppingList ? shoppingList : [])));
+    return this.http.get<Ingredient[]>(this.api + '/shopping-list.json').pipe(
+      map((shoppingList) => (shoppingList ? shoppingList : [])),
+      tap((ingredients) => {
+        this.shoppingService.setShoppingList(ingredients);
+      })
+    );
   }
 }

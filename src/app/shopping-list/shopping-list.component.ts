@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs-compat';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from './shopping-list.service';
 import { DataStorageService } from '../shared/data-storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-shopping-list',
@@ -20,10 +21,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.dataService.fetchShoppingList().subscribe((ingredients) => {
-      this.ingredients = ingredients;
-      this.shoppingListService.setShoppingList(ingredients);
-    });
+    this.dataService.fetchShoppingList().subscribe();
 
     this.igChangeSub = this.shoppingListService.ingredientsChanged.subscribe(
       (ingredients: Ingredient[]) => {
@@ -31,6 +29,7 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
         this.ingredients = ingredients;
       }
     );
+    this.ingredients = this.shoppingListService.getIngredients();
   }
 
   ngOnDestroy(): void {
@@ -42,11 +41,13 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   onSave() {
-    this.shoppingListService.saveShoppingList();
+    this.dataService.storeShoppingList(this.ingredients);
   }
 
   onReset() {
-    this.shoppingListService.setShoppingList([]);
-    this.shoppingListService.resetShoppingList();
+    if (confirm('Are you sure to remove all items in your Shopping List?')) {
+      this.shoppingListService.resetShoppingList();
+      this.dataService.storeShoppingList([]);
+    }
   }
 }

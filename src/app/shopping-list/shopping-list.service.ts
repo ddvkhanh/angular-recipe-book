@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Ingredient } from '../shared/ingredient.model';
 import { DataStorageService } from '../shared/data-storage.service';
 
@@ -7,14 +7,12 @@ import { DataStorageService } from '../shared/data-storage.service';
   providedIn: 'root',
 })
 export class ShoppingListService {
-  ingredientsChanged = new Subject<Ingredient[]>();
+  ingredientsChanged = new BehaviorSubject<Ingredient[]>([]);
   startedEditing = new Subject<number>();
 
   private ingredients: Ingredient[] = [];
 
   ingredientAdded = new EventEmitter<{ name: string; amount: number }>();
-
-  constructor(private dataService: DataStorageService) {}
 
   getIngredients() {
     return this.ingredients.slice();
@@ -63,21 +61,26 @@ export class ShoppingListService {
     this.ingredientsChanged.next(this.ingredients.slice());
   }
 
-  saveShoppingList() {
-    console.log(this.ingredients);
-    this.dataService.storeShoppingList(this.ingredients);
+  resetShoppingList() {
+    this.ingredients = [];
+    this.ingredientsChanged.next(this.ingredients.slice());
   }
+
+  // saveShoppingList() {
+  //   console.log(this.ingredients);
+  //   this.dataService.storeShoppingList(this.ingredients);
+  // }
 
   setShoppingList(ingredients: Ingredient[]) {
     this.ingredients = ingredients;
   }
 
-  resetShoppingList() {
-    debugger;
-    if (confirm('Are you sure to remove all items in your Shopping List?')) {
-      this.ingredients = [];
-      this.dataService.storeShoppingList(this.ingredients);
-      this.ingredientsChanged.next(this.ingredients.slice());
-    }
-  }
+  // resetShoppingList() {
+  //   debugger;
+  //   if (confirm('Are you sure to remove all items in your Shopping List?')) {
+  //     this.ingredients = [];
+  //     this.dataService.storeShoppingList(this.ingredients);
+  //     this.ingredientsChanged.next(this.ingredients.slice());
+  //   }
+  // }
 }

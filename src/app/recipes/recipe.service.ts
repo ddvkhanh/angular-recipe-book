@@ -10,10 +10,7 @@ export class RecipeService {
   recipesChanged = new Subject<Recipe[]>();
   private recipes: Recipe[] = [];
 
-  constructor(
-    private shoppingListService: ShoppingListService,
-    private dataService: DataStorageService
-  ) {}
+  constructor(private shoppingListService: ShoppingListService) {}
 
   // private recipes: Recipe[] = [
   //   new Recipe(
@@ -67,9 +64,5 @@ export class RecipeService {
   setRecipes(recipes: Recipe[]) {
     this.recipes = recipes;
     this.recipesChanged.next(this.recipes.slice());
-  }
-
-  saveRecipes() {
-    this.dataService.storeRecipe(this.recipes);
   }
 }

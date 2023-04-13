@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
-import { DataStorageService } from '../shared/data-storage.service';
+import { RecipeService } from '../recipes/recipe.service';
 
 @Component({
   selector: 'app-header',
@@ -15,7 +15,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   private userSub: Subscription;
 
   constructor(
-    private dataStorageService: DataStorageService,
+    private recipeService: RecipeService,
     private authService: AuthService,
     private router: Router
   ) {}
@@ -27,11 +27,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSaveData() {
-    this.dataStorageService.storeRecipe();
+    this.recipeService.storeRecipes();
   }
 
   onFetchData() {
-    this.dataStorageService.fetchRecipes().subscribe();
+    this.recipeService.fetchRecipes();
   }
 
   onLogout() {

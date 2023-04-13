@@ -8,22 +8,17 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { SharedModule } from './shared/shared.module';
 import { CoreModule } from './core.module';
 import { AuthModule } from './auth/auth.module';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent],
   imports: [
     BrowserModule,
-    FontAwesomeModule,
     AppRoutingModule,
     HttpClientModule,
     ShoppingListModule,
     SharedModule,
     CoreModule,
     AuthModule,
-    NgbModule,
-    FontAwesomeModule,
   ],
   bootstrap: [AppComponent],
 })

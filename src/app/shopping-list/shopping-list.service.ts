@@ -1,20 +1,20 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { Ingredient } from '../shared/ingredient.model';
+import { DataStorageService } from '../shared/data-storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ShoppingListService {
-  ingredientsChanged = new Subject<Ingredient[]>();
+  ingredientsChanged = new BehaviorSubject<Ingredient[]>([]);
   startedEditing = new Subject<number>();
 
-  private ingredients: Ingredient[] = [
-    new Ingredient('Apple', 5, 'piece'),
-    new Ingredient('Orange', 10, 'piece'),
-  ];
+  private ingredients: Ingredient[] = [];
 
   ingredientAdded = new EventEmitter<{ name: string; amount: number }>();
+
+  constructor(private dataStorageService: DataStorageService) {}
 
   getIngredients() {
     return this.ingredients.slice();
@@ -22,6 +22,10 @@ export class ShoppingListService {
 
   getIngredient(index: number) {
     return this.ingredients[index];
+  }
+
+  fetchIngredients() {
+    return this.dataStorageService.fetchShoppingList();
   }
 
   addIngredient(ingredient: Ingredient) {
@@ -38,9 +42,12 @@ export class ShoppingListService {
 
   addIngredients(ingredients: Ingredient[]) {
     for (let item of ingredients) {
-      let index = this.ingredients.findIndex(
-        (i) => i.name.toLowerCase() === item.name.toLowerCase()
-      );
+      let index =
+        this.ingredients.length > 0
+          ? this.ingredients.findIndex(
+              (i) => i.name.toLowerCase() === item.name.toLowerCase()
+            )
+          : -1;
       if (index >= 0) {
         this.ingredients[index].amount += item.amount;
       } else {
@@ -58,5 +65,22 @@ export class ShoppingListService {
   deleteIngredient(index: number) {
     this.ingredients.splice(index, 1);
     this.ingredientsChanged.next(this.ingredients.slice());
+  }
+
+  saveShoppingList() {
+    console.log(this.ingredients);
+    this.dataStorageService.storeShoppingList(this.ingredients);
+  }
+
+  setShoppingList(ingredients: Ingredient[]) {
+    this.ingredients = ingredients;
+  }
+
+  resetShoppingList() {
+    if (confirm('Are you sure to remove all items in your Shopping List?')) {
+      this.ingredients = [];
+      this.dataStorageService.storeShoppingList(this.ingredients);
+      this.ingredientsChanged.next(this.ingredients.slice());
+    }
   }
 }

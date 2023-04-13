@@ -16,17 +16,35 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   constructor(private shoppingListService: ShoppingListService) {}
 
   ngOnInit(): void {
-    this.ingredients = this.shoppingListService.getIngredients();
+    this.shoppingListService.fetchIngredients().subscribe((data) => {
+      this.ingredients = data;
+      this.shoppingListService.setShoppingList(this.ingredients);
+    });
+
     this.igChangeSub = this.shoppingListService.ingredientsChanged.subscribe(
-      (ingredients: Ingredient[]) => this.ingredients = ingredients
+      (ingredients: Ingredient[]) => {
+        this.ingredients = ingredients;
+      }
     );
+    this.ingredients = this.shoppingListService.getIngredients();
   }
 
   ngOnDestroy(): void {
     this.igChangeSub.unsubscribe();
   }
 
-  onEditItem(index:number) {
-     this.shoppingListService.startedEditing.next(index);
+  onEditItem(index: number) {
+    this.ingredients[index].isChecked = !this.ingredients[index].isChecked;
+    this.shoppingListService.startedEditing.next(index);
+  }
+
+  onSave() {
+    this.shoppingListService.saveShoppingList();
+  }
+
+  onReset() {
+    if (confirm('Are you sure to remove all items in your Shopping List?')) {
+      this.shoppingListService.resetShoppingList();
+    }
   }
 }

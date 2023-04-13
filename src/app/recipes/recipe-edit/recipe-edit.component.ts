@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { DataStorageService } from 'src/app/shared/data-storage.service';
 import { RecipeService } from '../recipe.service';
 
 @Component({
@@ -17,8 +16,7 @@ export class RecipeEditComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private recipeService: RecipeService,
-    private router: Router,
-    private dataStorageService: DataStorageService
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +47,7 @@ export class RecipeEditComponent implements OnInit {
                 Validators.required,
                 Validators.pattern(/^[1-9][0-9]*$/),
               ]),
-              unit: new FormControl(ingredient.unit)
+              unit: new FormControl(ingredient.unit),
             })
           );
         }
@@ -76,24 +74,17 @@ export class RecipeEditComponent implements OnInit {
           Validators.required,
           Validators.pattern(/^[1-9][0-9]*$/),
         ]),
-        unit: new FormControl(null)
+        unit: new FormControl(null),
       })
     );
   }
 
   onSubmit() {
-    // const newRecipe = new Recipe(
-    //   this.recipeForm.value['value'],
-    //   this.recipeForm.value['description'],
-    //   this.recipeForm.value['imagePath'],
-    //   this.recipeForm.value['ingredients']
-    // );
     if (this.editMode) {
       this.recipeService.updateRecipe(this.id, this.recipeForm.value);
     } else {
       this.recipeService.addRecipe(this.recipeForm.value);
     }
-    this.dataStorageService.storeRecipe();
     this.onCancel();
   }
 
@@ -101,7 +92,7 @@ export class RecipeEditComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 
-  onDeleteIngredient(index: number){
+  onDeleteIngredient(index: number) {
     (<FormArray>this.recipeForm.get('ingredients')).removeAt(index);
   }
 }

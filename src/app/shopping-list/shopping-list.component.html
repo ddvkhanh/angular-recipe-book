@@ -25,15 +25,15 @@
         }"
         *ngFor="let ingredient of ingredients; let i = index"
         (click)="onEditItem(i)"
-        ><i
+        ><button
+          class="btn me-3"
           [ngClass]="
-            ingredient.isChecked
-              ? 'fa-solid fa-square-check'
-              : 'fa-regular fa-square-check'
+            ingredient.isChecked ? 'btn-success' : 'btn-outline-success'
           "
-          [ngStyle]="{ color: ingredient.isChecked ? '#7d7d7d' : '#1c7d41' }"
-        ></i>
-        {{ ingredient.name }} - {{ ingredient.amount
+          (click)="onCheckToggle(i)"
+        >
+          <i class="fa-solid fa-check"></i></button
+        >{{ ingredient.name }} - {{ ingredient.amount
         }}<span *ngIf="ingredient.unit"> ({{ ingredient.unit }})</span>
       </a>
     </ul>

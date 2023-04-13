@@ -34,8 +34,11 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   }
 
   onEditItem(index: number) {
-    this.ingredients[index].isChecked = !this.ingredients[index].isChecked;
     this.shoppingListService.startedEditing.next(index);
+  }
+
+  onCheckToggle(index: number) {
+    this.ingredients[index].isChecked = !this.ingredients[index].isChecked;
   }
 
   onSave() {

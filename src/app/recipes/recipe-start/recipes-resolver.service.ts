@@ -5,26 +5,25 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { DataStorageService } from 'src/app/shared/data-storage.service';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RecipesResolverService implements Resolve<Recipe[]> {
-  constructor(
-    private dataStorageService: DataStorageService,
-    private recieService: RecipeService
-  ) {}
+  constructor(private recipeService: RecipeService) {}
 
   resolve(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Recipe[] | Observable<Recipe[]> | Promise<Recipe[]> {
-    const recipes = this.recieService.getRecipes();
+    const recipes = this.recipeService.getRecipes();
     if (recipes.length === 0) {
-      return this.dataStorageService.fetchRecipes();
+      return this.recipeService
+        .fetchRecipes()
+        .pipe(tap((data) => this.recipeService.setRecipes(data)));
     } else {
       recipes;
     }

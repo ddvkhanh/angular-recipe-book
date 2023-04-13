@@ -14,12 +14,18 @@ export class ShoppingListService {
 
   ingredientAdded = new EventEmitter<{ name: string; amount: number }>();
 
+  constructor(private dataStorageService: DataStorageService) {}
+
   getIngredients() {
     return this.ingredients.slice();
   }
 
   getIngredient(index: number) {
     return this.ingredients[index];
+  }
+
+  fetchIngredients() {
+    return this.dataStorageService.fetchShoppingList();
   }
 
   addIngredient(ingredient: Ingredient) {
@@ -61,26 +67,20 @@ export class ShoppingListService {
     this.ingredientsChanged.next(this.ingredients.slice());
   }
 
-  resetShoppingList() {
-    this.ingredients = [];
-    this.ingredientsChanged.next(this.ingredients.slice());
+  saveShoppingList() {
+    console.log(this.ingredients);
+    this.dataStorageService.storeShoppingList(this.ingredients);
   }
-
-  // saveShoppingList() {
-  //   console.log(this.ingredients);
-  //   this.dataService.storeShoppingList(this.ingredients);
-  // }
 
   setShoppingList(ingredients: Ingredient[]) {
     this.ingredients = ingredients;
   }
 
-  // resetShoppingList() {
-  //   debugger;
-  //   if (confirm('Are you sure to remove all items in your Shopping List?')) {
-  //     this.ingredients = [];
-  //     this.dataService.storeShoppingList(this.ingredients);
-  //     this.ingredientsChanged.next(this.ingredients.slice());
-  //   }
-  // }
+  resetShoppingList() {
+    if (confirm('Are you sure to remove all items in your Shopping List?')) {
+      this.ingredients = [];
+      this.dataStorageService.storeShoppingList(this.ingredients);
+      this.ingredientsChanged.next(this.ingredients.slice());
+    }
+  }
 }

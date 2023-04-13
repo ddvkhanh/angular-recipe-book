@@ -1,15 +1,6 @@
-import {
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-  Output,
-  EventEmitter,
-  OnDestroy,
-} from '@angular/core';
+import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { DataStorageService } from 'src/app/shared/data-storage.service';
 import { Ingredient } from 'src/app/shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list.service';
 
@@ -45,7 +36,12 @@ export class ShoppingEditComponent implements OnInit, OnDestroy {
 
   onAddItem(f: NgForm) {
     const value = f.value;
-    const newIngredient = new Ingredient(value.name, value.amount, value.unit);
+    const newIngredient = new Ingredient(
+      value.name,
+      value.amount,
+      value.unit,
+      false
+    );
     if (this.editMode) {
       this.shoppingListService.updateIngredient(
         this.editedItemIndex,

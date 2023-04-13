@@ -19,9 +19,20 @@
       <a
         class="list-group-item"
         style="cursor: pointer"
+        [ngStyle]="{
+          'text-decoration': ingredient.isChecked ? 'line-through' : none,
+          'font-style': ingredient.isChecked ? 'italic' : none
+        }"
         *ngFor="let ingredient of ingredients; let i = index"
         (click)="onEditItem(i)"
-      >
+        ><i
+          [ngClass]="
+            ingredient.isChecked
+              ? 'fa-solid fa-square-check'
+              : 'fa-regular fa-square-check'
+          "
+          [ngStyle]="{ color: ingredient.isChecked ? '#7d7d7d' : '#1c7d41' }"
+        ></i>
         {{ ingredient.name }} - {{ ingredient.amount
         }}<span *ngIf="ingredient.unit"> ({{ ingredient.unit }})</span>
       </a>
